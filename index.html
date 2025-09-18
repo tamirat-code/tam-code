@@ -60,7 +60,7 @@
 
   <h1>My Library</h1>
 
-  <!-- New Book Form -->
+
   <form id="newBookForm">
     <input type="text" id="title" placeholder="Title" required>
     <input type="text" id="author" placeholder="Author" required>
@@ -72,13 +72,12 @@
     <button type="submit">Add Book</button>
   </form>
 
-  <!-- Library Display -->
+
   <div id="library"></div>
 
   <script>
     const myLibrary = [];
 
-    // Book constructor
     function Book(title, author, pages, read) {
       this.id = crypto.randomUUID();
       this.title = title;
@@ -87,19 +86,19 @@
       this.read = read;
     }
 
-    // Prototype function to toggle read status
+  
     Book.prototype.toggleRead = function() {
       this.read = !this.read;
     };
 
-    // Add book to library
+  
     function addBookToLibrary(title, author, pages, read) {
       const book = new Book(title, author, pages, read);
       myLibrary.push(book);
       displayBooks();
     }
 
-    // Display all books
+  
     function displayBooks() {
       const library = document.getElementById('library');
       library.innerHTML = ''; // clear old display
@@ -142,7 +141,7 @@
       });
     }
 
-    // Remove book by id
+
     function removeBook(id) {
       const index = myLibrary.findIndex(book => book.id === id);
       if (index !== -1) {
@@ -150,7 +149,7 @@
         displayBooks();
       }
     }
-    // Handle form submit
+ 
     document.getElementById('newBookForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const title = document.getElementById('title').value;
@@ -161,9 +160,10 @@
       e.target.reset();
     });
 
-    // Add some starter books
+  
     addBookToLibrary('The Hobbit', 'J.R.R. Tolkien', 310, true);
     addBookToLibrary('1984', 'George Orwell', 328, false);
   </script>
 </body>
+
 </html>
