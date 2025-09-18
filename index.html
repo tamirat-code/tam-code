@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    h1 { text-align: center; }
+    #library {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 20px;
+    }
+    .book-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .book-card h3 { margin: 0; }
+    .book-card p { margin: 5px 0; }
+    .book-card button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-remove { background: #dc3545; color: white; }
+    .btn-toggle { background: #0d6efd; color: white; }
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 300px;
+      gap: 10px;
+      margin: 20px auto;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+    }
+    form input, form select, form button {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    form button {
+      background: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Library</h1>
+
+  <!-- New Book Form -->
+  <form id="newBookForm">
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="text" id="author" placeholder="Author" required>
+    <input type="number" id="pages" placeholder="Pages" required>
+    <select id="read">
+      <option value="true">Read</option>
+      <option value="false">Not Read</option>
+    </select>
+    <button type="submit">Add Book</button>
+  </form>
+
+  <!-- Library Display -->
+  <div id="library"></div>
+
+  <script>
+    const myLibrary = [];
+
+    // Book constructor
+    function Book(title, author, pages, read) {
+      this.id = crypto.randomUUID();
+      this.title = title;
+      this.author = author;
+      this.pages = pages;
+      this.read = read;
+    }
+
+    // Prototype function to toggle read status
+    Book.prototype.toggleRead = function() {
+      this.read = !this.read;
+    };
+
+    // Add book to library
+    function addBookToLibrary(title, author, pages, read) {
+      const book = new Book(title, author, pages, read);
+      myLibrary.push(book);
+      displayBooks();
+    }
+
+    // Display all books
+    function displayBooks() {
+      const library = document.getElementById('library');
+      library.innerHTML = ''; // clear old display
+
+      myLibrary.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.dataset.id = book.id;
+
+        const h3 = document.createElement('h3');
+        h3.textContent = book.title;
+
+        const pAuthor = document.createElement('p');
+
+        pAuthor.innerHTML = `<strong>Author:</strong> ${book.author}`;
+
+        const pPages = document.createElement('p');
+        pPages.innerHTML =  `<strong>Pages:</strong> ${book.pages}`;
+
+        const pStatus = document.createElement('p');
+        pStatus.innerHTML = `<strong>Status:</strong> ${book.read ? 'Read' : 'Not Read'}`;
+
+        const btnToggle = document.createElement('button');
+        btnToggle.className = 'btn-toggle';
+        btnToggle.textContent = 'Toggle Read';
+        btnToggle.addEventListener('click', () => {
+          book.toggleRead();
+          displayBooks();
+        });
+
+        const btnRemove = document.createElement('button');
+        btnRemove.className = 'btn-remove';
+        btnRemove.textContent = 'Remove';
+        btnRemove.addEventListener('click', () => {
+          removeBook(book.id);
+        });
+
+        card.append(h3, pAuthor, pPages, pStatus, btnToggle, btnRemove);
+        library.appendChild(card);
+      });
+    }
+
+    // Remove book by id
+    function removeBook(id) {
+      const index = myLibrary.findIndex(book => book.id === id);
+      if (index !== -1) {
+        myLibrary.splice(index, 1);
+        displayBooks();
+      }
+    }
+    // Handle form submit
+    document.getElementById('newBookForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const pages = document.getElementById('pages').value;
+      const read = document.getElementById('read').value === 'true';
+      addBookToLibrary(title, author, pages, read);
+      e.target.reset();
+    });
+
+    // Add some starter books
+    addBookToLibrary('The Hobbit', 'J.R.R. Tolkien', 310, true);
+    addBookToLibrary('1984', 'George Orwell', 328, false);
+  </script>
+</body>
+</html>
